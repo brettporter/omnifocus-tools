@@ -58,85 +58,86 @@ tell application "Finder"
 end tell
 
 if pstrDBPath ­ "" then
-	set strCmd to "sqlite3 -separator ': ' \"" & pstrDBPath & "\" " & quoted form of ("
-	select \"INBOX GROUPS & ACTIONS\", count(*) from task where (inInbox=1);
-	select \"    Inbox action groups\", count(*) from task where (inInbox=1) and (childrenCount>0);
-	select \"    Inbox actions\", count(*) from task where (inInbox=1) and (childrenCount=0);
+        set commands to "
+	select 'INBOX GROUPS & ACTIONS', count(*) from task where (inInbox=1);
+	select '    Inbox action groups', count(*) from task where (inInbox=1) and (childrenCount>0);
+	select '    Inbox actions', count(*) from task where (inInbox=1) and (childrenCount=0);
 	select null;
-	select \"FOLDERS\"	, count(*) from folder;
-	select \"    Active folders\", count(*) from folder where effectiveActive=1;
-	select \"    Dropped folders\", count(*) from folder where effectiveActive=0;
+	select 'FOLDERS'	, count(*) from folder;
+	select '    Active folders', count(*) from folder where effectiveActive=1;
+	select '    Dropped folders', count(*) from folder where effectiveActive=0;
 	select null;
-	select \"PROJECTS\", count(*) from projectInfo where containsSingletonActions=0;
-	select \"    Active projects\", count(*) from projectInfo where (containsSingletonActions=0) and (status=\"active\");
-	select \"            Current projects\", count(*) from projectInfo p join task t on t.projectinfo=p.pk where (p.containsSingletonActions=0) and (p.folderEffectiveActive=1) and (p.status=\"active\") and (t.dateToStart is null or t.dateToStart < (strftime('%s','now') - strftime('%s','2001-01-01')));
-	select \"            Pending projects\", count(*) from projectInfo p join task t on t.projectinfo=p.pk where (p.containsSingletonActions=0) and (p.folderEffectiveActive=1) and (p.status=\"active\") and (t.dateToStart > (strftime('%s','now') - strftime('%s','2001-01-01')));
-	select \"    On-hold projects\", count(*) from projectInfo where (containsSingletonActions=0) and (status=\"inactive\");
-	select \"    Completed projects\", count(*) from projectInfo where (containsSingletonActions=0) and (status=\"done\");
-	select \"    Dropped projects\", count(*) from projectInfo where (containsSingletonActions=0) and (( status=\"dropped\") or (folderEffectiveActive=0));
+	select 'PROJECTS', count(*) from projectInfo where containsSingletonActions=0;
+	select '    Active projects', count(*) from projectInfo where (containsSingletonActions=0) and (status='active');
+	select '            Current projects', count(*) from projectInfo p join task t on t.projectinfo=p.pk where (p.containsSingletonActions=0) and (p.folderEffectiveActive=1) and (p.status='active') and (t.dateToStart is null or t.dateToStart < (strftime('%s','now') - strftime('%s','2001-01-01')));
+	select '            Pending projects', count(*) from projectInfo p join task t on t.projectinfo=p.pk where (p.containsSingletonActions=0) and (p.folderEffectiveActive=1) and (p.status='active') and (t.dateToStart > (strftime('%s','now') - strftime('%s','2001-01-01')));
+	select '    On-hold projects', count(*) from projectInfo where (containsSingletonActions=0) and (status='inactive');
+	select '    Completed projects', count(*) from projectInfo where (containsSingletonActions=0) and (status='done');
+	select '    Dropped projects', count(*) from projectInfo where (containsSingletonActions=0) and (( status='dropped') or (folderEffectiveActive=0));
 	select null;	
-	select \"SINGLE ACTION LISTS\", count(*) from projectInfo where containsSingletonActions=1;
-	select \"    Active single action lists\", count(*) from projectInfo where (containsSingletonActions=1) and (status=\"active\");
-	select \"    On-hold single action lists\", count(*) from projectInfo where (containsSingletonActions=1) and (status=\"inactive\");
-	select \"    Completed single action lists\", count(*) from projectInfo where (containsSingletonActions=1) and (status=\"done\");
-	select \"    Dropped single action lists\", count(*) from projectInfo where (containsSingletonActions=1) and (( status=\"dropped\") or (folderEffectiveActive=0));
+	select 'SINGLE ACTION LISTS', count(*) from projectInfo where containsSingletonActions=1;
+	select '    Active single action lists', count(*) from projectInfo where (containsSingletonActions=1) and (status='active');
+	select '    On-hold single action lists', count(*) from projectInfo where (containsSingletonActions=1) and (status='inactive');
+	select '    Completed single action lists', count(*) from projectInfo where (containsSingletonActions=1) and (status='done');
+	select '    Dropped single action lists', count(*) from projectInfo where (containsSingletonActions=1) and (( status='dropped') or (folderEffectiveActive=0));
 	select null;
-	select \"CONTEXTS\", count(*) from context;
-	select \"    Active contexts\", count(*) from context where (effectiveActive=1) and (allowsNextAction=1);
-	select \"    On-hold contexts\", count(*) from context where (effectiveActive=1) and allowsNextAction=0;
-	select \"    Dropped contexts\", count(*) from context where effectiveActive=0;
+	select 'CONTEXTS', count(*) from context;
+	select '    Active contexts', count(*) from context where (effectiveActive=1) and (allowsNextAction=1);
+	select '    On-hold contexts', count(*) from context where (effectiveActive=1) and allowsNextAction=0;
+	select '    Dropped contexts', count(*) from context where effectiveActive=0;
 	select null;
-	select \"ACTION GROUPS\", count(*) from task where (projectinfo is null) and (childrenCount>0);
-	select \"    Remaining action groups\", count(*) from task where (projectinfo is null) and (dateCompleted is null) and (childrenCount>0);
-	select \"    Completed action groups\", count(dateCompleted) from task where (projectinfo is null) and (childrenCount>0);
+	select 'ACTION GROUPS', count(*) from task where (projectinfo is null) and (childrenCount>0);
+	select '    Remaining action groups', count(*) from task where (projectinfo is null) and (dateCompleted is null) and (childrenCount>0);
+	select '    Completed action groups', count(dateCompleted) from task where (projectinfo is null) and (childrenCount>0);
 	select null;
-	select \"ACTIONS\", count(*) from task where (projectinfo is null) and (childrenCount=0);
-	select \"    Completed actions\", count(dateCompleted) from task where (projectinfo is null) and (childrenCount=0);
-	select \"    Dropped project actions\", count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp where (projectinfo is null) and (childrenCount=0)  and (dateCompleted is null) 
-				and (tp.containingProjectinfo is not null and (tp.status=\"dropped\" or tp.folderEffectiveActive=0));
-	select \"    Dropped context actions\", count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp left join context c on tp.context=c.persistentIdentifier where (projectinfo is null) and (tp.childrenCount=0)  and (dateCompleted is null) 
-				and (tp.containingProjectinfo is null or (tp.status !=\"dropped\" and tp.folderEffectiveActive=1))
+	select 'ACTIONS', count(*) from task where (projectinfo is null) and (childrenCount=0);
+	select '    Completed actions', count(dateCompleted) from task where (projectinfo is null) and (childrenCount=0);
+	select '    Dropped project actions', count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp where (projectinfo is null) and (childrenCount=0)  and (dateCompleted is null) 
+				and (tp.containingProjectinfo is not null and (tp.status='dropped' or tp.folderEffectiveActive=0));
+	select '    Dropped context actions', count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp left join context c on tp.context=c.persistentIdentifier where (projectinfo is null) and (tp.childrenCount=0)  and (dateCompleted is null) 
+				and (tp.containingProjectinfo is null or (tp.status !='dropped' and tp.folderEffectiveActive=1))
 				and c.effectiveActive= 0;
-	select \"    Remaining actions\", count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp left join context c on tp.context=c.persistentIdentifier where (projectinfo is null) and (tp.childrenCount=0)  and (dateCompleted is null) 
-				and (tp.containingProjectinfo is null or (tp.status !=\"dropped\" and tp.folderEffectiveActive=1))
+	select '    Remaining actions', count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp left join context c on tp.context=c.persistentIdentifier where (projectinfo is null) and (tp.childrenCount=0)  and (dateCompleted is null) 
+				and (tp.containingProjectinfo is null or (tp.status !='dropped' and tp.folderEffectiveActive=1))
 				and (tp.context is null or c.effectiveActive= 1);
-	select \"        Actions in Projects on hold\", count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp left join context c on tp.context=c.persistentIdentifier where (projectinfo is null) and (tp.childrenCount=0)  and (dateCompleted is null) 
-				and (tp.containingProjectinfo is null or (tp.status !=\"dropped\" and tp.folderEffectiveActive=1))
+	select '        Actions in Projects on hold', count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp left join context c on tp.context=c.persistentIdentifier where (projectinfo is null) and (tp.childrenCount=0)  and (dateCompleted is null) 
+				and (tp.containingProjectinfo is null or (tp.status !='dropped' and tp.folderEffectiveActive=1))
 				and (tp.context is null or c.effectiveActive= 1)
-				and (tp.containingProjectInfo is not null and tp.status=\"inactive\");
-	select \"        Actions in Contexts on hold\", count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp left join context c on tp.context=c.persistentIdentifier where (projectinfo is null) and (tp.childrenCount=0)  and (dateCompleted is null) 
-				and (tp.containingProjectinfo is null or (tp.status !=\"dropped\" and tp.folderEffectiveActive=1))
+				and (tp.containingProjectInfo is not null and tp.status='inactive');
+	select '        Actions in Contexts on hold', count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp left join context c on tp.context=c.persistentIdentifier where (projectinfo is null) and (tp.childrenCount=0)  and (dateCompleted is null) 
+				and (tp.containingProjectinfo is null or (tp.status !='dropped' and tp.folderEffectiveActive=1))
 				and (tp.context is null or c.effectiveActive= 1)
-				and (tp.containingProjectInfo is null or tp.status!=\"inactive\")
+				and (tp.containingProjectInfo is null or tp.status!='inactive')
 				and (tp.context is not null and c.allowsNextAction=0);
-	select \"        Blocked actions\", count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp left join context c on tp.context=c.persistentIdentifier where (projectinfo is null) and (tp.childrenCount=0)  and (dateCompleted is null) 
-				and (tp.containingProjectinfo is null or (tp.status !=\"dropped\" and tp.folderEffectiveActive=1))
+	select '        Blocked actions', count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp left join context c on tp.context=c.persistentIdentifier where (projectinfo is null) and (tp.childrenCount=0)  and (dateCompleted is null) 
+				and (tp.containingProjectinfo is null or (tp.status !='dropped' and tp.folderEffectiveActive=1))
 				and (tp.context is null or c.effectiveActive= 1)
-				and (tp.containingProjectInfo is null or tp.status!=\"inactive\")
+				and (tp.containingProjectInfo is null or tp.status!='inactive')
 				and (tp.context is null or c.allowsNextAction=1)
 				and tp.blocked=1;
-	select \"        	Blocked by future start date\", count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp left join context c on tp.context=c.persistentIdentifier where (projectinfo is null) and (tp.childrenCount=0)  and (dateCompleted is null) 
-				and (tp.containingProjectinfo is null or (tp.status !=\"dropped\" and tp.folderEffectiveActive=1))
+	select '        	Blocked by future start date', count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp left join context c on tp.context=c.persistentIdentifier where (projectinfo is null) and (tp.childrenCount=0)  and (dateCompleted is null) 
+				and (tp.containingProjectinfo is null or (tp.status !='dropped' and tp.folderEffectiveActive=1))
 				and (tp.context is null or c.effectiveActive= 1)
-				and (tp.containingProjectInfo is null or tp.status!=\"inactive\")
+				and (tp.containingProjectInfo is null or tp.status!='inactive')
 				and (tp.context is null or c.allowsNextAction=1)
 				and tp.blocked=1
 				and tp.blockedByFutureStartDate=1;
-	select \"        	Sequentially blocked\", count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp left join context c on tp.context=c.persistentIdentifier where (projectinfo is null) and (tp.childrenCount=0)  and (dateCompleted is null) 
-				and (tp.containingProjectinfo is null or (tp.status !=\"dropped\" and tp.folderEffectiveActive=1))
+	select '        	Sequentially blocked', count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp left join context c on tp.context=c.persistentIdentifier where (projectinfo is null) and (tp.childrenCount=0)  and (dateCompleted is null) 
+				and (tp.containingProjectinfo is null or (tp.status !='dropped' and tp.folderEffectiveActive=1))
 				and (tp.context is null or c.effectiveActive= 1)
-				and (tp.containingProjectInfo is null or tp.status!=\"inactive\")
+				and (tp.containingProjectInfo is null or tp.status!='inactive')
 				and (tp.context is null or c.allowsNextAction=1)
 				and tp.blocked=1
 				and tp.blockedByFutureStartDate=0;
-	select \"        Available actions\", count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp left join context c on tp.context=c.persistentIdentifier where (projectinfo is null) and (tp.childrenCount=0)  and (dateCompleted is null) 
-				and (tp.containingProjectinfo is null or (tp.status !=\"dropped\" and tp.folderEffectiveActive=1))
+	select '        Available actions', count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp left join context c on tp.context=c.persistentIdentifier where (projectinfo is null) and (tp.childrenCount=0)  and (dateCompleted is null) 
+				and (tp.containingProjectinfo is null or (tp.status !='dropped' and tp.folderEffectiveActive=1))
 				and (tp.context is null or c.effectiveActive= 1)
-				and (tp.containingProjectInfo is null or tp.status!=\"inactive\")
+				and (tp.containingProjectInfo is null or tp.status!='inactive')
 				and (tp.context is null or c.allowsNextAction=1)
 				and tp.blocked=0;
 				
-	")
+	"
+	set strCmd to "sqlite3 -separator ': ' \"" & pstrDBPath & "\" " & quoted form of (commands)
 	
 	-- 		try
 	set strList to do shell script strCmd
