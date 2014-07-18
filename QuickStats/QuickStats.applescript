@@ -182,9 +182,9 @@ if pstrDBPath ­ "" then
 	select null;
 	"
 	if brief then
-		set commands to projects_cmd & lists_cmd & contexts_cmd & groups_cmd & actions_cmd & summary_cmd
+		set commands to summary_cmd & actions_cmd & projects_cmd & contexts_cmd
 	else
-		set commands to inbox_cmd & folders_cmd & projects_cmd & lists_cmd & contexts_cmd & groups_cmd & actions_cmd & tasks_cmd & summary_cmd
+		set commands to summary_cmd & actions_cmd & inbox_cmd & folders_cmd & projects_cmd & lists_cmd & contexts_cmd & groups_cmd & tasks_cmd
 	end if
 	set strCmd to "sqlite3 -separator ': ' \"" & pstrDBPath & "\" " & quoted form of (commands)
 	
