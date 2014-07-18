@@ -149,7 +149,27 @@ if pstrDBPath ­ "" then
 				and tp.blocked=0;
 	select null;
 	"
-	set commands to inbox_cmd & folders_cmd & projects_cmd & lists_cmd & contexts_cmd & groups_cmd & actions_cmd
+	set summary_cmd to "
+	select 'SUMMARY';
+	select '    Inbox available actions', count(*) from task where (inInbox=1) and (dateCompleted is null);
+	select '    Due in next week', count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp left join context c on tp.context=c.persistentIdentifier where (((projectinfo is null) and (tp.childrenCount=0))  or containsSingletonActions=0) and (dateCompleted is null) 
+				and (tp.containingProjectinfo is null or (tp.status !='dropped' and tp.folderEffectiveActive=1))
+				and (tp.containingProjectInfo is null or tp.status!='inactive')
+				and tp.blockedByFutureStartDate=0
+				and effectiveDateDue <= strftime('%s','now','+7 days') - strftime('%s','2001-01-01');
+	select '    Flagged projects and actions', count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp left join context c on tp.context=c.persistentIdentifier where (((projectinfo is null) and (tp.childrenCount=0))  or containsSingletonActions=0) and (dateCompleted is null)
+				and (tp.containingProjectinfo is null or (tp.status !='dropped' and tp.folderEffectiveActive=1))
+				and (tp.containingProjectInfo is null or tp.status!='inactive')
+				and tp.blockedByFutureStartDate=0
+				and tp.effectiveFlagged;
+	select '    Due or Flagged', count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp left join context c on tp.context=c.persistentIdentifier where (((projectinfo is null) and (tp.childrenCount=0))  or containsSingletonActions=0) and (dateCompleted is null)
+				and (tp.containingProjectinfo is null or (tp.status !='dropped' and tp.folderEffectiveActive=1))
+				and (tp.containingProjectInfo is null or tp.status!='inactive')
+				and tp.blockedByFutureStartDate=0
+				and (tp.effectiveFlagged or (effectiveDateDue <= strftime('%s','now','+7 days') - strftime('%s','2001-01-01')));
+	select null;
+	"
+	set commands to inbox_cmd & folders_cmd & projects_cmd & lists_cmd & contexts_cmd & groups_cmd & actions_cmd & summary_cmd
 	set strCmd to "sqlite3 -separator ': ' \"" & pstrDBPath & "\" " & quoted form of (commands)
 	
 	-- 		try
