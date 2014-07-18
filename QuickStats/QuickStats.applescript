@@ -168,18 +168,21 @@ if pstrDBPath ­ "" then
 				and (tp.containingProjectinfo is null or (tp.status !='dropped' and tp.folderEffectiveActive=1))
 				and (tp.context is null or c.effectiveActive= 1)
 				and (tp.containingProjectInfo is null or tp.status!='inactive')
+				/* and (tp.context is null or c.allowsNextAction=1) */
 				and tp.blockedByFutureStartDate=0
 				and effectiveDateDue <= strftime('%s','now','+7 days') - strftime('%s','2001-01-01');
 	select '    Flagged projects and actions', count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp left join context c on tp.context=c.persistentIdentifier where (((projectinfo is null) and (tp.childrenCount=0))  or containsSingletonActions=0) and (dateCompleted is null)
 				and (tp.containingProjectinfo is null or (tp.status !='dropped' and tp.folderEffectiveActive=1))
 				and (tp.context is null or c.effectiveActive= 1)
 				and (tp.containingProjectInfo is null or tp.status!='inactive')
+				/* and (tp.context is null or c.allowsNextAction=1) */
 				and tp.blockedByFutureStartDate=0
 				and tp.effectiveFlagged;
 	select '    Due or Flagged', count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp left join context c on tp.context=c.persistentIdentifier where (((projectinfo is null) and (tp.childrenCount=0))  or containsSingletonActions=0) and (dateCompleted is null)
 				and (tp.containingProjectinfo is null or (tp.status !='dropped' and tp.folderEffectiveActive=1))
 				and (tp.context is null or c.effectiveActive= 1)
 				and (tp.containingProjectInfo is null or tp.status!='inactive')
+				/* and (tp.context is null or c.allowsNextAction=1) */
 				and tp.blockedByFutureStartDate=0
 				and (tp.effectiveFlagged or (effectiveDateDue <= strftime('%s','now','+7 days') - strftime('%s','2001-01-01')));
 	select null;
