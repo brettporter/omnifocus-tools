@@ -6,6 +6,34 @@ property pstrMinOSX : "10.6"
 
 property pTimeOut : 20
 
+-- Original version: https://github.com/RobTrew/tree-tools/blob/master/OmniFocus%20scripts/Statistics/QuickStats.applescript
+
+-- Copyright © 2012, 2013, 2014 Robin Trew
+-- 
+-- Permission is hereby granted, free of charge, 
+-- to any person obtaining a copy of this software 
+-- and associated documentation files (the "Software"), 
+-- to deal in the Software without restriction, 
+-- including without limitation the rights to use, copy, 
+-- modify, merge, publish, distribute, sublicense, 
+-- and/or sell copies of the Software, and to permit persons 
+-- to whom the Software is furnished to do so, 
+-- subject to the following conditions:
+-- 
+-- *******
+-- The above copyright notice and this permission notice 
+-- shall be included in ALL copies 
+-- or substantial portions of the Software.
+-- *******
+-- 
+-- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
+-- EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
+-- OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+-- IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
+-- DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, 
+-- TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
+-- OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 -- Ver 0.8 adds clipboard option to dialogue
 -- Ver 0.9 gives an error message if the cache schema has changed, leading to an SQL error in the script
 -- Ver 1.0 slight simplification of the code
