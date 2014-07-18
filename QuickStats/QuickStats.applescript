@@ -101,6 +101,10 @@ if pstrDBPath ­ "" then
 	select '    Completed action groups', count(dateCompleted) from task where (projectinfo is null) and (childrenCount>0);
 	select null;
 	"
+	set tasks_cmd to "
+	select 'ALL TASKS', count(*) from task;
+	select null;
+	"
 	set actions_cmd to "
 	select 'ACTIONS', count(*) from task where (projectinfo is null) and (childrenCount=0);
 	select '    Completed actions', count(dateCompleted) from task where (projectinfo is null) and (childrenCount=0);
@@ -169,7 +173,7 @@ if pstrDBPath ­ "" then
 				and (tp.effectiveFlagged or (effectiveDateDue <= strftime('%s','now','+7 days') - strftime('%s','2001-01-01')));
 	select null;
 	"
-	set commands to inbox_cmd & folders_cmd & projects_cmd & lists_cmd & contexts_cmd & groups_cmd & actions_cmd & summary_cmd
+	set commands to inbox_cmd & folders_cmd & projects_cmd & lists_cmd & contexts_cmd & groups_cmd & actions_cmd & tasks_cmd & summary_cmd
 	set strCmd to "sqlite3 -separator ': ' \"" & pstrDBPath & "\" " & quoted form of (commands)
 	
 	-- 		try
