@@ -4,7 +4,7 @@ property pVersion : "2.07.brett"
 property pstrDBPath : "$HOME/Library/Containers/com.omnigroup.OmniFocus2/Data/Library/Caches/com.omnigroup.OmniFocus/OmniFocusDatabase2"
 property pstrMinOSX : "10.9"
 
-property pTimeOut : 20
+property pTimeOut : 30
 
 -- Original version: https://github.com/RobTrew/tree-tools/blob/master/OmniFocus%20scripts/Statistics/QuickStats.applescript
 
