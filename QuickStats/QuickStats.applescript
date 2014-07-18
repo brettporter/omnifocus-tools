@@ -58,7 +58,7 @@ tell application "Finder"
 
 	set screen_resolution to bounds of window of desktop
 	set height to item 4 of screen_resolution
-	if height < 900 then
+	if height < 1024 then
 		set brief to true
 	else
 		set brief to false
