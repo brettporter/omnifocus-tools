@@ -1,8 +1,8 @@
 property pTitle : "OmniFocus: Quick Stats"
 property pVersion : "2.07.brett"
 
-property pstrDBPath : "$HOME/Library/Caches/com.omnigroup.OmniFocus/OmniFocusDatabase2"
-property pstrMinOSX : "10.6"
+property pstrDBPath : "$HOME/Library/Containers/com.omnigroup.OmniFocus2/Data/Library/Caches/com.omnigroup.OmniFocus/OmniFocusDatabase2"
+property pstrMinOSX : "10.9"
 
 property pTimeOut : 20
 
@@ -58,7 +58,7 @@ tell application "Finder"
 end tell
 
 if pstrDBPath ­ "" then
-        set commands to "
+	set commands to "
 	select 'INBOX GROUPS & ACTIONS', count(*) from task where (inInbox=1);
 	select '    Inbox action groups', count(*) from task where (inInbox=1) and (childrenCount>0);
 	select '    Inbox actions', count(*) from task where (inInbox=1) and (childrenCount=0);
@@ -165,7 +165,7 @@ end FileExists
 
 on GetCachePath()
 	try
-		tell application "Finder" to tell (application file id "OFOC") to "$HOME/Library/Caches/" & its id & "/OmniFocusDatabase2"
+		tell application "Finder" to tell (application file id "OFOC") to "$HOME/Library/Containers/com.omnigroup.OmniFocus2/Data/Library/Caches/" & its id & "/OmniFocusDatabase2"
 	on error
 		error "OmniFocus not installed ..."
 	end try
