@@ -9,29 +9,29 @@ property pTimeOut : 30
 -- Original version: https://github.com/RobTrew/tree-tools/blob/master/OmniFocus%20scripts/Statistics/QuickStats.applescript
 
 -- Copyright © 2012, 2013, 2014 Robin Trew
--- 
--- Permission is hereby granted, free of charge, 
--- to any person obtaining a copy of this software 
--- and associated documentation files (the "Software"), 
--- to deal in the Software without restriction, 
--- including without limitation the rights to use, copy, 
--- modify, merge, publish, distribute, sublicense, 
--- and/or sell copies of the Software, and to permit persons 
--- to whom the Software is furnished to do so, 
+--
+-- Permission is hereby granted, free of charge,
+-- to any person obtaining a copy of this software
+-- and associated documentation files (the "Software"),
+-- to deal in the Software without restriction,
+-- including without limitation the rights to use, copy,
+-- modify, merge, publish, distribute, sublicense,
+-- and/or sell copies of the Software, and to permit persons
+-- to whom the Software is furnished to do so,
 -- subject to the following conditions:
--- 
+--
 -- *******
--- The above copyright notice and this permission notice 
--- shall be included in ALL copies 
+-- The above copyright notice and this permission notice
+-- shall be included in ALL copies
 -- or substantial portions of the Software.
 -- *******
--- 
--- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
--- EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
--- OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
--- IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
--- DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, 
--- TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
+--
+-- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+-- EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+-- OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+-- IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+-- DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+-- TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 -- OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 -- Ver 0.8 adds clipboard option to dialogue
@@ -116,44 +116,44 @@ if pstrDBPath ­ "" then
 	set actions_cmd to "
 	select 'ACTIONS', count(*) from task where (projectinfo is null) and (childrenCount=0);
 	select '    Completed actions', count(dateCompleted) from task where (projectinfo is null) and (childrenCount=0);
-	select '    Dropped project actions', count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp where (projectinfo is null) and (childrenCount=0)  and (dateCompleted is null) 
+	select '    Dropped project actions', count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp where (projectinfo is null) and (childrenCount=0)  and (dateCompleted is null)
 				and (tp.containingProjectinfo is not null and (tp.status='dropped' or tp.folderEffectiveActive=0));
-	select '    Dropped context actions', count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp left join context c on tp.context=c.persistentIdentifier where (projectinfo is null) and (tp.childrenCount=0)  and (dateCompleted is null) 
+	select '    Dropped context actions', count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp left join context c on tp.context=c.persistentIdentifier where (projectinfo is null) and (tp.childrenCount=0)  and (dateCompleted is null)
 				and (tp.containingProjectinfo is null or (tp.status !='dropped' and tp.folderEffectiveActive=1))
 				and c.effectiveActive= 0;
-	select '    Remaining actions', count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp left join context c on tp.context=c.persistentIdentifier where (projectinfo is null) and (tp.childrenCount=0)  and (dateCompleted is null) 
+	select '    Remaining actions', count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp left join context c on tp.context=c.persistentIdentifier where (projectinfo is null) and (tp.childrenCount=0)  and (dateCompleted is null)
 				and (tp.containingProjectinfo is null or (tp.status !='dropped' and tp.folderEffectiveActive=1))
 				and (tp.context is null or c.effectiveActive= 1);
-	select '        Actions in Projects on hold', count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp left join context c on tp.context=c.persistentIdentifier where (projectinfo is null) and (tp.childrenCount=0)  and (dateCompleted is null) 
+	select '        Actions in Projects on hold', count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp left join context c on tp.context=c.persistentIdentifier where (projectinfo is null) and (tp.childrenCount=0)  and (dateCompleted is null)
 				and (tp.containingProjectinfo is null or (tp.status !='dropped' and tp.folderEffectiveActive=1))
 				and (tp.context is null or c.effectiveActive= 1)
 				and (tp.containingProjectInfo is not null and tp.status='inactive');
-	select '        Actions in Contexts on hold', count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp left join context c on tp.context=c.persistentIdentifier where (projectinfo is null) and (tp.childrenCount=0)  and (dateCompleted is null) 
+	select '        Actions in Contexts on hold', count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp left join context c on tp.context=c.persistentIdentifier where (projectinfo is null) and (tp.childrenCount=0)  and (dateCompleted is null)
 				and (tp.containingProjectinfo is null or (tp.status !='dropped' and tp.folderEffectiveActive=1))
 				and (tp.context is null or c.effectiveActive= 1)
 				and (tp.containingProjectInfo is null or tp.status!='inactive')
 				and (tp.context is not null and c.allowsNextAction=0);
-	select '        Blocked actions', count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp left join context c on tp.context=c.persistentIdentifier where (projectinfo is null) and (tp.childrenCount=0)  and (dateCompleted is null) 
+	select '        Blocked actions', count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp left join context c on tp.context=c.persistentIdentifier where (projectinfo is null) and (tp.childrenCount=0)  and (dateCompleted is null)
 				and (tp.containingProjectinfo is null or (tp.status !='dropped' and tp.folderEffectiveActive=1))
 				and (tp.context is null or c.effectiveActive= 1)
 				and (tp.containingProjectInfo is null or tp.status!='inactive')
 				and (tp.context is null or c.allowsNextAction=1)
 				and tp.blocked=1;
-	select '        	Blocked by future start date', count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp left join context c on tp.context=c.persistentIdentifier where (projectinfo is null) and (tp.childrenCount=0)  and (dateCompleted is null) 
+	select '        	Blocked by future start date', count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp left join context c on tp.context=c.persistentIdentifier where (projectinfo is null) and (tp.childrenCount=0)  and (dateCompleted is null)
 				and (tp.containingProjectinfo is null or (tp.status !='dropped' and tp.folderEffectiveActive=1))
 				and (tp.context is null or c.effectiveActive= 1)
 				and (tp.containingProjectInfo is null or tp.status!='inactive')
 				and (tp.context is null or c.allowsNextAction=1)
 				and tp.blocked=1
 				and tp.blockedByFutureStartDate=1;
-	select '        	Sequentially blocked', count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp left join context c on tp.context=c.persistentIdentifier where (projectinfo is null) and (tp.childrenCount=0)  and (dateCompleted is null) 
+	select '        	Sequentially blocked', count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp left join context c on tp.context=c.persistentIdentifier where (projectinfo is null) and (tp.childrenCount=0)  and (dateCompleted is null)
 				and (tp.containingProjectinfo is null or (tp.status !='dropped' and tp.folderEffectiveActive=1))
 				and (tp.context is null or c.effectiveActive= 1)
 				and (tp.containingProjectInfo is null or tp.status!='inactive')
 				and (tp.context is null or c.allowsNextAction=1)
 				and tp.blocked=1
 				and tp.blockedByFutureStartDate=0;
-	select '        Available actions', count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp left join context c on tp.context=c.persistentIdentifier where (projectinfo is null) and (tp.childrenCount=0)  and (dateCompleted is null) 
+	select '        Available actions', count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp left join context c on tp.context=c.persistentIdentifier where (projectinfo is null) and (tp.childrenCount=0)  and (dateCompleted is null)
 				and (tp.containingProjectinfo is null or (tp.status !='dropped' and tp.folderEffectiveActive=1))
 				and (tp.context is null or c.effectiveActive= 1)
 				and (tp.containingProjectInfo is null or tp.status!='inactive')
