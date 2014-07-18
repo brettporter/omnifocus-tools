@@ -1,5 +1,5 @@
 property pTitle : "OmniFocus: Quick Stats"
-property pVersion : "2.07"
+property pVersion : "2.07.brett"
 
 property pstrDBPath : "$HOME/Library/Caches/com.omnigroup.OmniFocus/OmniFocusDatabase2"
 property pstrMinOSX : "10.6"
