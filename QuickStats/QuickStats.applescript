@@ -55,6 +55,14 @@ tell application "Finder"
 		display dialog "This script requires OSX " & pstrMinOSX & " or higher" buttons {"OK"} default button 1 with title pTitle & "Ver. " & pVersion
 		return
 	end if
+
+	set screen_resolution to bounds of window of desktop
+	set height to item 4 of screen_resolution
+	if height < 900 then
+		set brief to true
+	else
+		set brief to false
+	end if
 end tell
 
 if pstrDBPath ­ "" then
@@ -173,7 +181,11 @@ if pstrDBPath ­ "" then
 				and (tp.effectiveFlagged or (effectiveDateDue <= strftime('%s','now','+7 days') - strftime('%s','2001-01-01')));
 	select null;
 	"
-	set commands to inbox_cmd & folders_cmd & projects_cmd & lists_cmd & contexts_cmd & groups_cmd & actions_cmd & tasks_cmd & summary_cmd
+	if brief then
+		set commands to projects_cmd & lists_cmd & contexts_cmd & groups_cmd & actions_cmd & summary_cmd
+	else
+		set commands to inbox_cmd & folders_cmd & projects_cmd & lists_cmd & contexts_cmd & groups_cmd & actions_cmd & tasks_cmd & summary_cmd
+	end if
 	set strCmd to "sqlite3 -separator ': ' \"" & pstrDBPath & "\" " & quoted form of (commands)
 	
 	-- 		try
