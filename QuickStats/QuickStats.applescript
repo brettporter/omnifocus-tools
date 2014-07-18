@@ -58,15 +58,19 @@ tell application "Finder"
 end tell
 
 if pstrDBPath ­ "" then
-	set commands to "
+	set inbox_cmd to "
 	select 'INBOX GROUPS & ACTIONS', count(*) from task where (inInbox=1);
 	select '    Inbox action groups', count(*) from task where (inInbox=1) and (childrenCount>0);
 	select '    Inbox actions', count(*) from task where (inInbox=1) and (childrenCount=0);
 	select null;
+	"
+	set folders_cmd to "
 	select 'FOLDERS'	, count(*) from folder;
 	select '    Active folders', count(*) from folder where effectiveActive=1;
 	select '    Dropped folders', count(*) from folder where effectiveActive=0;
 	select null;
+	"
+	set projects_cmd to "
 	select 'PROJECTS', count(*) from projectInfo where containsSingletonActions=0;
 	select '    Active projects', count(*) from projectInfo where (containsSingletonActions=0) and (status='active');
 	select '            Current projects', count(*) from projectInfo p join task t on t.projectinfo=p.pk where (p.containsSingletonActions=0) and (p.folderEffectiveActive=1) and (p.status='active') and (t.dateToStart is null or t.dateToStart < (strftime('%s','now') - strftime('%s','2001-01-01')));
@@ -74,22 +78,30 @@ if pstrDBPath ­ "" then
 	select '    On-hold projects', count(*) from projectInfo where (containsSingletonActions=0) and (status='inactive');
 	select '    Completed projects', count(*) from projectInfo where (containsSingletonActions=0) and (status='done');
 	select '    Dropped projects', count(*) from projectInfo where (containsSingletonActions=0) and (( status='dropped') or (folderEffectiveActive=0));
-	select null;	
+	select null;
+	"
+	set lists_cmd to "
 	select 'SINGLE ACTION LISTS', count(*) from projectInfo where containsSingletonActions=1;
 	select '    Active single action lists', count(*) from projectInfo where (containsSingletonActions=1) and (status='active');
 	select '    On-hold single action lists', count(*) from projectInfo where (containsSingletonActions=1) and (status='inactive');
 	select '    Completed single action lists', count(*) from projectInfo where (containsSingletonActions=1) and (status='done');
 	select '    Dropped single action lists', count(*) from projectInfo where (containsSingletonActions=1) and (( status='dropped') or (folderEffectiveActive=0));
 	select null;
+	"
+	set contexts_cmd to "
 	select 'CONTEXTS', count(*) from context;
 	select '    Active contexts', count(*) from context where (effectiveActive=1) and (allowsNextAction=1);
 	select '    On-hold contexts', count(*) from context where (effectiveActive=1) and allowsNextAction=0;
 	select '    Dropped contexts', count(*) from context where effectiveActive=0;
 	select null;
+	"
+	set groups_cmd to "
 	select 'ACTION GROUPS', count(*) from task where (projectinfo is null) and (childrenCount>0);
 	select '    Remaining action groups', count(*) from task where (projectinfo is null) and (dateCompleted is null) and (childrenCount>0);
 	select '    Completed action groups', count(dateCompleted) from task where (projectinfo is null) and (childrenCount>0);
 	select null;
+	"
+	set actions_cmd to "
 	select 'ACTIONS', count(*) from task where (projectinfo is null) and (childrenCount=0);
 	select '    Completed actions', count(dateCompleted) from task where (projectinfo is null) and (childrenCount=0);
 	select '    Dropped project actions', count(*) from (task t left join projectinfo p on t.containingProjectinfo=p.pk) tp where (projectinfo is null) and (childrenCount=0)  and (dateCompleted is null) 
@@ -135,8 +147,9 @@ if pstrDBPath ­ "" then
 				and (tp.containingProjectInfo is null or tp.status!='inactive')
 				and (tp.context is null or c.allowsNextAction=1)
 				and tp.blocked=0;
-				
+	select null;
 	"
+	set commands to inbox_cmd & folders_cmd & projects_cmd & lists_cmd & contexts_cmd & groups_cmd & actions_cmd
 	set strCmd to "sqlite3 -separator ': ' \"" & pstrDBPath & "\" " & quoted form of (commands)
 	
 	-- 		try
