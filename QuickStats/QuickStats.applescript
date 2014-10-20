@@ -50,12 +50,17 @@ property pToClipboard : "Copy list to clipboard"
 
 if not FileExists(pstrDBPath) then set pstrDBPath to GetCachePath()
 
-tell application "Finder"
-	if (version < pstrMinOSX) then
-		display dialog "This script requires OSX " & pstrMinOSX & " or higher" buttons {"OK"} default button 1 with title pTitle & "Ver. " & pVersion
+set sysinfo to system info
+set osver to system version of sysinfo
+
+considering numeric strings
+	if (osver < pstrMinOSX) then
+		display dialog "This script requires OSX " & pstrMinOSX & " or higher: " & osver buttons {"OK"} default button 1 with title pTitle & "Ver. " & pVersion
 		return
 	end if
-	
+end considering
+
+tell application "Finder"
 	set screen_resolution to bounds of window of desktop
 	set height to item 4 of screen_resolution
 	if height < 1024 then
